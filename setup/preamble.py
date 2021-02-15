@@ -3,28 +3,31 @@ import os
 c_dir=os.getcwd()
 os.chdir(os.path.expanduser("~"))
 if os.path.isdir('gprMax'):
-    print('Hey, gprMax exists but need to be added to this session')
+    print('Hey, gprMax exists but need to be added to this session. Just a moment ...')
     os.chdir('gprMax')
-    !python setup.py install
+    os.system("python setup.py install")
 else:
-    print('Hey, need to clone, compile and install gprMax')
-    !git clone https://github.com/gprMax/gprMax.git ~/gprMax
+    print('Hey, need to clone, compile and install gprMax. It can take a while ...')
+    os.system("git clone https://github.com/gprMax/gprMax.git ~/gprMax")
     os.chdir('gprMax')
-    !python setup.py build
-    !python setup.py install
+    os.system("python setup.py build")
+    os.system("python setup.py install")
     
 
 os.chdir(c_dir)
     
 #!pip install -q gprMax
-!pip install -q vtk
-!pip install -q bitstruct==3.10.0
-!pip install -q bitstring==3.1.5
+print('Installing vtk')
+os.system("pip install -q vtk")
+os.system("pip install -q bitstruct==3.10.0")
+print('Installing bitstruct')
+os.system("pip install -q bitstring==3.1.5")
+print('Installing bitstring')
 
 from IPython.core.display import HTML
 HTML("<script>Jupyter.notebook.kernel.restart()</script>")
 
-%matplotlib inline
+#%matplotlib inline
 from IPython.core.display import display, HTML
 from IPython.display import clear_output
 display(HTML("<style>div.output_scroll  {height: 30em}; </style>"))
@@ -38,7 +41,7 @@ from xml.etree import ElementTree as ET
 
 plt.rcParams["figure.figsize"] = (15,10)
 
-
+print("Installing gprMax_model()")
 def gprMax_model(filename):
     objects = []
     materials = []
@@ -150,7 +153,7 @@ def gprMax_model(filename):
     #finally show the plot
     plt.show()
 
-    
+print("Installing gprMax_Ascan()")    
 def gprMax_Ascan(filename, rxnumber, rxcomponent):
     import h5py
     """Gets A-scan output data from a model.
@@ -188,6 +191,7 @@ def gprMax_Ascan(filename, rxnumber, rxcomponent):
 
     return outputdata, time, pos
 
+print("Installing gprMax_Bscan()")
 def gprMax_Bscan(filename, rx, rxcomponent):
     import h5py
     import os
@@ -277,7 +281,7 @@ def merge_files(basefilename, removefiles=False):
         for model in range(modelruns):
             file = basefilename + str(model + 1) + '.out'
             os.remove(file)
-
+print("Installing plot_Ascan()")
 def plot_Ascan(x, y):
         offset = 0
         p = plt.plot(x,y,'k-')
@@ -309,6 +313,7 @@ def plot_Ascan(x, y):
         ax.set_aspect(asp)
         plt.show()
 
+print("Installing plot_Bscan()")
 def plot_Bscan(scan,time,time_offset=0):
     scan_max = np.max(np.max(np.abs(scan)))
     plt.imshow(scan, cmap='seismic', extent=[0,scan.shape[1],np.max(time)-time_offset,0-time_offset], aspect=15, vmin=-scan_max, vmax=scan_max)
@@ -318,7 +323,8 @@ def plot_Bscan(scan,time,time_offset=0):
     ax.set_ylabel('Time [ns]')
     plt.show()
     
-    
+
+print("Installing create_model()")    
 class create_model():
     
     def __init__(self,file):
@@ -673,11 +679,15 @@ class create_model():
             self.rem.append(4)
             
 
+
+print("Installing view_file()")
 def view_file(filename):
     f = open(filename, 'r')
     inputFile = f.read()
     print(inputFile)
+
     
+print("Installing gprMax_to_dzt()")    
 def gprMax_to_dzt(filename, rx, rxcomponent, centerFreq, distTx_Rx, trace_step):
     
     import h5py as h5
